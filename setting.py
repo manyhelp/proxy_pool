@@ -67,7 +67,7 @@ PROXY_FETCHER = [
 # 代理验证目标网站
 HTTP_URL = "http://4.ipw.cn/"
 
-HTTPS_URL = "https://q.10jqka.com.cn/"
+HTTPS_URL = "https://4.ipw.cn/"
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 5
