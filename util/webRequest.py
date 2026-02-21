@@ -59,7 +59,7 @@ class WebRequest(object):
                 'Connection': 'keep-alive',
                 'Accept-Language': 'zh-CN,zh;q=0.8'}
 
-    def get(self, url, header=None, retry_time=3, retry_interval=5, timeout=5, *args, **kwargs):
+    def get(self, url, header=None,  retry_time=3, retry_interval=5, timeout=5, params=None, *args, **kwargs):
         """
         get method
         :param url: target url
@@ -74,7 +74,7 @@ class WebRequest(object):
             headers.update(header)
         while True:
             try:
-                self.response = requests.get(url, headers=headers, timeout=timeout, *args, **kwargs)
+                self.response = requests.get(url, headers=headers, params=params, timeout=timeout, *args, **kwargs)
                 return self
             except Exception as e:
                 self.log.error("requests: %s error: %s" % (url, str(e)))

@@ -37,10 +37,10 @@ PORT = 5010
 # example:
 #      Redis: redis://:password@ip:port/db
 #      Ssdb:  ssdb://:password@ip:port
-DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
+DB_CONN = "redis://:@127.0.0.1:6379/0"
 
 # proxy table name
-TABLE_NAME = 'use_proxy'
+TABLE_NAME = "use_proxy"
 
 
 # ###### config the proxy fetch function ######
@@ -55,17 +55,22 @@ PROXY_FETCHER = [
     "freeProxy08",
     "freeProxy09",
     "freeProxy10",
-    "freeProxy11"
+    "freeProxy11",
+    "freeProxy12",
+    "freeProxy13",
+    "freeProxy14",
+    "freeProxy15",
+    "freeProxy16",
 ]
 
 # ############# proxy validator #################
 # 代理验证目标网站
-HTTP_URL = "http://httpbin.org"
+HTTP_URL = "http://4.ipw.cn/"
 
-HTTPS_URL = "https://www.qq.com"
+HTTPS_URL = "https://q.10jqka.com.cn/"
 
 # 代理验证时超时时间
-VERIFY_TIMEOUT = 10
+VERIFY_TIMEOUT = 5
 
 # 近PROXY_CHECK_COUNT次校验中允许的最大失败次数,超过则剔除代理
 MAX_FAIL_COUNT = 0
@@ -74,7 +79,7 @@ MAX_FAIL_COUNT = 0
 # MAX_FAIL_RATE = 0.1
 
 # proxyCheck时代理数量少于POOL_SIZE_MIN触发抓取
-POOL_SIZE_MIN = 20
+POOL_SIZE_MIN = 200
 
 # ############# proxy attributes #################
 # 是否启用代理地域属性
