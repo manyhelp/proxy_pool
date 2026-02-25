@@ -83,10 +83,16 @@ def getAll():
     return jsonify([_.to_dict for _ in proxies])
 
 
-@app.route('/delete/', methods=['GET'])
+@app.route('/delete/', methods=['GET', 'POST'])
 def delete():
     proxy = request.args.get('proxy')
-    status = proxy_handler.delete(Proxy(proxy))
+    proxies = request.form.getlist('proxies') or request.json.get('proxies', []) if request.method == 'POST' else []
+    if proxies:
+        status = proxy_handler.deleteMany([Proxy(p) for p in proxies])
+    elif proxy:
+        status = proxy_handler.delete(Proxy(proxy))
+    else:
+        return {"code": 1, "msg": "proxy or proxies parameter required"}
     return {"code": 0, "src": status}
 
 

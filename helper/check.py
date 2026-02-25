@@ -79,9 +79,9 @@ class DoValidator(object):
     @classmethod
     def regionGetter(cls, proxy):
         try:
-            url = 'https://searchplugin.csdn.net/api/v1/ip/get?ip=%s' % proxy.proxy.split(':')[0]
+            url = 'http://ip-api.com/json/%s?lang=zh-CN' % proxy.proxy.split(':')[0]
             r = WebRequest().get(url=url, retry_time=1, timeout=2).json
-            return r['data']['address']
+            return r.get('country', '') + '/' + r.get('regionName', '') + '/' + r.get('city', '')
         except:
             return 'error'
 

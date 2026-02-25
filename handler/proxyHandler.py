@@ -61,6 +61,15 @@ class ProxyHandler(object):
         """
         return self.db.delete(proxy.proxy)
 
+    def deleteMany(self, proxies):
+        """
+        delete multiple useful proxies
+        :param proxies: list of Proxy
+        :return:
+        """
+        proxy_str_list = [proxy.proxy for proxy in proxies]
+        return self.db.deleteMany(proxy_str_list)
+
     def getAll(self, https=False):
         """
         get all proxy from pool as Proxy list

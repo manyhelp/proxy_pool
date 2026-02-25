@@ -88,6 +88,20 @@ class SsdbClient(object):
         """
         self.__conn.hdel(self.name, proxy_str)
 
+    def deleteMany(self, proxy_str_list):
+        """
+        批量移除代理, 使用changeTable指定hash name
+        :param proxy_str_list: proxy str list
+        :return: 删除数量
+        """
+        if not proxy_str_list:
+            return 0
+        count = 0
+        for proxy_str in proxy_str_list:
+            self.__conn.hdel(self.name, proxy_str)
+            count += 1
+        return count
+
     def exists(self, proxy_str):
         """
         判断指定代理是否存在, 使用changeTable指定hash name

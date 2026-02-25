@@ -13,7 +13,7 @@
 __author__ = 'JHao'
 
 import re
-from requests import head
+from requests import head, get as requests_get
 from util.six import withMetaclass
 from util.singleton import Singleton
 from handler.configHandler import ConfigHandler
@@ -72,11 +72,23 @@ def httpTimeOutValidator(proxy):
 
 @ProxyValidator.addHttpsValidator
 def httpsTimeOutValidator(proxy):
-    """https检测超时"""
+    """https检测超时 - 通过HTTP代理转发HTTPS请求"""
 
-    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "https://{proxy}".format(proxy=proxy)}
+    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "http://{proxy}".format(proxy=proxy)}
+
     try:
         r = head(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
+        return True if r.status_code == 200 else False
+    except Exception as e:
+        return False
+
+
+@ProxyValidator.addHttpsValidator
+def httpsConnectValidator(proxy):
+    """HTTPS 代理检测 - 使用 HTTP 代理转发 HTTPS 请求"""
+    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "http://{proxy}".format(proxy=proxy)}
+    try:
+        r = requests_get(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
         return True if r.status_code == 200 else False
     except Exception as e:
         return False

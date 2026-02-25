@@ -32,7 +32,7 @@ class ProxyFetcher(object):
             "http://www.kxdaili.com/dailiip/2/1.html",
         ]
         for url in target_urls:
-            tree = WebRequest().get(url).tree
+            tree = WebRequest().get(url, timeout=30).tree
             for tr in tree.xpath("//table[@class='active']//tr")[1:]:
                 ip = "".join(tr.xpath("./td[1]/text()")).strip()
                 port = "".join(tr.xpath("./td[2]/text()")).strip()
@@ -51,7 +51,7 @@ class ProxyFetcher(object):
                 url_list.append(pattern.format(page_index))
 
         for url in url_list:
-            tree = WebRequest().get(url).tree
+            tree = WebRequest().get(url, timeout=30).tree
             proxy_list = tree.xpath(".//table//tr")
             sleep(1)  # 必须sleep 不然第二条请求不到数据
             for tr in proxy_list[1:]:
@@ -65,7 +65,7 @@ class ProxyFetcher(object):
             "http://www.ip3366.net/free/?stype=2",
         ]
         for url in urls:
-            r = WebRequest().get(url, timeout=10)
+            r = WebRequest().get(url, timeout=30)
             proxies = re.findall(
                 r"<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>",
                 r.text,
@@ -76,7 +76,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy04():
         """89免费代理"""
-        r = WebRequest().get("https://www.89ip.cn/index_1.html", timeout=10)
+        r = WebRequest().get("https://www.89ip.cn/index_1.html", timeout=30)
         proxies = re.findall(
             r"<td.*?>[\s\S]*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})[\s\S]*?</td>[\s\S]*?<td.*?>[\s\S]*?(\d+)[\s\S]*?</td>",
             r.text,
@@ -87,7 +87,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy05():
         """稻壳代理 https://www.docip.net/"""
-        r = WebRequest().get("https://www.docip.net/data/free.json", timeout=10)
+        r = WebRequest().get("https://www.docip.net/data/free.json", timeout=30)
         try:
             for each in r.json["data"]:
                 yield each["ip"]
@@ -99,7 +99,7 @@ class ProxyFetcher(object):
         urls = ["https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1"]
         request = WebRequest()
         for url in urls:
-            r = request.get(url, timeout=10)
+            r = request.get(url, timeout=30)
             proxies = re.findall(
                 r"<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>",
                 r.text,
@@ -111,7 +111,7 @@ class ProxyFetcher(object):
     def freeProxy07():
         r = WebRequest().get(
             "https://raw.githubusercontent.com/CharlesPikachu/freeproxy/master/proxies.json",
-            timeout=10,
+            timeout=30,
         )
         try:
             for each in r.json["data"]:
@@ -127,7 +127,7 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy08():
-        r = WebRequest().get("http://api.66daili.com/?format=json", timeout=10)
+        r = WebRequest().get("http://api.66daili.com/?format=json", timeout=30)
         try:
             for each in r.json["data"]:
                 ip = each["ip"]
@@ -138,7 +138,7 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy09():
-        r = WebRequest().get("http://api.goodips.com/?format=json", timeout=10)
+        r = WebRequest().get("http://api.goodips.com/?format=json", timeout=30)
         try:
             for each in r.json["data"]:
                 if (
@@ -156,7 +156,7 @@ class ProxyFetcher(object):
     def freeProxy10():
         r = WebRequest().get(
             "https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/http/data.json",
-            timeout=10,
+            timeout=30,
         )
         try:
             for each in r.json:
@@ -170,7 +170,7 @@ class ProxyFetcher(object):
     def freeProxy11():
         r = WebRequest().get(
             "https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/https/data.json",
-            timeout=10,
+            timeout=30,
         )
         try:
             for each in r.json:
@@ -184,7 +184,7 @@ class ProxyFetcher(object):
     def freeProxy12():
         r = WebRequest().get(
             "https://proxylist.geonode.com/api/proxy-list?limit=100&protocols=http&page=1&sort_by=lastChecked&sort_type=desc",
-            timeout=10,
+            timeout=30,
         )
         try:
             for each in r.json["data"]:
@@ -198,7 +198,7 @@ class ProxyFetcher(object):
     def freeProxy13():
         r = WebRequest().get(
             "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt",
-            timeout=10,
+            timeout=30,
         )
         try:
             for line in r.text.strip().split("\n"):
@@ -216,7 +216,7 @@ class ProxyFetcher(object):
     def freeProxy14():
         r = WebRequest().get(
             "https://raw.githubusercontent.com/parserpp/ip_ports/main/proxyinfo.json",
-            timeout=10,
+            timeout=30,
         )
         try:
             for each in r.json["http_high_anonymous"]:
@@ -247,7 +247,7 @@ class ProxyFetcher(object):
                 "kill_port": "",
                 "isp": "",
             },
-            timeout=10,
+            timeout=30,
         )
         try:
             for each in re.findall(r"\b(?:\d{1,3}\.){3}\d{1,3}:\d+\b", r.text):
@@ -259,7 +259,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy16():
         """稻壳代理"""
-        r = WebRequest().get("https://www.docip.net/data/free.json", timeout=10)
+        r = WebRequest().get("https://www.docip.net/data/free.json", timeout=30)
         try:
             for each in r.json["data"]:
                 yield each["ip"]

@@ -88,6 +88,16 @@ class RedisClient(object):
         """
         return self.__conn.hdel(self.name, proxy_str)
 
+    def deleteMany(self, proxy_str_list):
+        """
+        批量移除代理, 使用changeTable指定hash name
+        :param proxy_str_list: proxy str list
+        :return: 删除数量
+        """
+        if not proxy_str_list:
+            return 0
+        return self.__conn.hdel(self.name, *proxy_str_list)
+
     def exists(self, proxy_str):
         """
         判断指定代理是否存在, 使用changeTable指定hash name
