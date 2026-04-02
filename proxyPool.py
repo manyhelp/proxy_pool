@@ -10,13 +10,13 @@
                    2020/6/19:
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = "JHao"
 
 import click
 from helper.launcher import startServer, startScheduler
 from setting import BANNER, VERSION
 
-CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
@@ -27,17 +27,17 @@ def cli():
 
 @cli.command(name="schedule")
 def schedule():
-    """ 启动调度程序 """
+    """启动调度程序"""
     click.echo(BANNER)
     startScheduler()
 
 
 @cli.command(name="server")
 def server():
-    """ 启动api服务 """
+    """启动api服务"""
     click.echo(BANNER)
     startServer()
 
 
-if __name__ == '__main__':
-    cli()
+if __name__ == "__main__":
+    startScheduler()

@@ -10,7 +10,7 @@
                    2019/8/8:
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = "JHao"
 
 import json
 from helper.proxy import Proxy
@@ -30,5 +30,5 @@ def testProxyClass():
     print(Proxy.createFromJson(proxy_str).to_dict)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     testProxyClass()

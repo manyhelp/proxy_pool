@@ -11,7 +11,7 @@
                    2020/05/26: 区分http和https
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = "JHao"
 
 from helper.proxy import Proxy
 from db.dbClient import DbClient
@@ -19,7 +19,7 @@ from handler.configHandler import ConfigHandler
 
 
 class ProxyHandler(object):
-    """ Proxy CRUD operator"""
+    """Proxy CRUD operator"""
 
     def __init__(self):
         self.conf = ConfigHandler()
@@ -92,4 +92,4 @@ class ProxyHandler(object):
         :return:
         """
         total_use_proxy = self.db.getCount()
-        return {'count': total_use_proxy}
+        return {"count": total_use_proxy}

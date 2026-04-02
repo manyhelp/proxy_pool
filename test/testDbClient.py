@@ -10,7 +10,7 @@
                    2020/6/23:
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = "JHao"
 
 from db.dbClient import DbClient
 
@@ -35,5 +35,5 @@ def testDbClient():
     print("DbClient ok!")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     testDbClient()

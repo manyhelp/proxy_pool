@@ -10,7 +10,7 @@
                    2020/6/22:
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = "JHao"
 
 import os
 import setting
@@ -80,4 +80,3 @@ class ConfigHandler(withMetaclass(Singleton)):
     @LazyProperty
     def timezone(self):
         return os.getenv("TIMEZONE", setting.TIMEZONE)
-

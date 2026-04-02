@@ -10,7 +10,7 @@
                    2021/5/25:
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = "JHao"
 
 from helper.validator import ProxyValidator
 
@@ -24,5 +24,5 @@ def testProxyValidator():
         print(_)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     testProxyValidator()

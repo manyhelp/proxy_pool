@@ -10,7 +10,7 @@
                    2023/03/10: 支持带用户认证的代理格式 username:password@ip:port
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = "JHao"
 
 import re
 from requests import head, get as requests_get
@@ -20,12 +20,13 @@ from handler.configHandler import ConfigHandler
 
 conf = ConfigHandler()
 
-HEADER = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36',
-          'Accept': '*/*',
-          'Connection': 'keep-alive',
-          'Accept-Language': 'zh-CN,zh;q=0.9',
-          'accept-encoding': 'gzip, deflate, br, zstd',
-          }
+HEADER = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+    "Accept": "*/*",
+    "Connection": "keep-alive",
+    "Accept-Language": "zh-CN,zh;q=0.9",
+    "accept-encoding": "gzip, deflate, br, zstd",
+}
 
 IP_REGEX = re.compile(r"(.*:.*@)?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}")
 
@@ -59,12 +60,17 @@ def formatValidator(proxy):
 
 @ProxyValidator.addHttpValidator
 def httpTimeOutValidator(proxy):
-    """ http检测超时 """
+    """http检测超时"""
 
-    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "https://{proxy}".format(proxy=proxy)}
+    proxies = {
+        "http": "http://{proxy}".format(proxy=proxy),
+        "https": "https://{proxy}".format(proxy=proxy),
+    }
 
     try:
-        r = head(conf.httpUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout)
+        r = head(
+            conf.httpUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout
+        )
         return True if r.status_code == 200 else False
     except Exception as e:
         return False
@@ -74,10 +80,19 @@ def httpTimeOutValidator(proxy):
 def httpsTimeOutValidator(proxy):
     """https检测超时 - 通过HTTP代理转发HTTPS请求"""
 
-    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "http://{proxy}".format(proxy=proxy)}
+    proxies = {
+        "http": "http://{proxy}".format(proxy=proxy),
+        "https": "http://{proxy}".format(proxy=proxy),
+    }
 
     try:
-        r = head(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
+        r = head(
+            conf.httpsUrl,
+            headers=HEADER,
+            proxies=proxies,
+            timeout=conf.verifyTimeout,
+            verify=False,
+        )
         return True if r.status_code == 200 else False
     except Exception as e:
         return False
@@ -86,9 +101,18 @@ def httpsTimeOutValidator(proxy):
 @ProxyValidator.addHttpsValidator
 def httpsConnectValidator(proxy):
     """HTTPS 代理检测 - 使用 HTTP 代理转发 HTTPS 请求"""
-    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "http://{proxy}".format(proxy=proxy)}
+    proxies = {
+        "http": "http://{proxy}".format(proxy=proxy),
+        "https": "http://{proxy}".format(proxy=proxy),
+    }
     try:
-        r = requests_get(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
+        r = requests_get(
+            conf.httpsUrl,
+            headers=HEADER,
+            proxies=proxies,
+            timeout=conf.verifyTimeout,
+            verify=False,
+        )
         return True if r.status_code == 200 else False
     except Exception as e:
         return False

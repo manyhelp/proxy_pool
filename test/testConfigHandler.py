@@ -10,7 +10,7 @@
                    2017/7/31:
 -------------------------------------------------
 """
-__author__ = 'J_hao'
+__author__ = "J_hao"
 
 from handler.configHandler import ConfigHandler
 from time import sleep
@@ -33,6 +33,5 @@ def testConfig():
         sleep(5)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     testConfig()
-

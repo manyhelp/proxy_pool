@@ -65,9 +65,9 @@ PROXY_FETCHER = [
 
 # ############# proxy validator #################
 # 代理验证目标网站
-HTTP_URL = "http://4.ipw.cn/"
+HTTP_URL = "http://quote.eastmoney.com/concept/sh603777.html?from=classic"
 
-HTTPS_URL = "https://4.ipw.cn/"
+HTTPS_URL = "https://quote.eastmoney.com/concept/sh603777.html?from=classic"
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 5
@@ -83,7 +83,7 @@ POOL_SIZE_MIN = 200
 
 # ############# proxy attributes #################
 # 是否启用代理地域属性
-PROXY_REGION = True
+PROXY_REGION = False
 
 # ############# scheduler config #################
 

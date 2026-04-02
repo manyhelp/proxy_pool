@@ -11,7 +11,7 @@
                    2021/02/23: runProxyCheck时,剩余代理少于POOL_SIZE_MIN时执行抓取
 -------------------------------------------------
 """
-__author__ = 'JHao'
+__author__ = "JHao"
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ProcessPoolExecutor
@@ -51,21 +51,24 @@ def runScheduler():
     scheduler_log = LogHandler("scheduler")
     scheduler = BlockingScheduler(logger=scheduler_log, timezone=timezone)
 
-    scheduler.add_job(__runProxyFetch, 'interval', minutes=10, id="proxy_fetch", name="proxy采集")
-    scheduler.add_job(__runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
+    scheduler.add_job(
+        __runProxyFetch, "interval", minutes=10, id="proxy_fetch", name="proxy采集"
+    )
+    scheduler.add_job(
+        __runProxyCheck, "interval", minutes=2, id="proxy_check", name="proxy检查"
+    )
     executors = {
-        'default': {'type': 'threadpool', 'max_workers': 20},
-        'processpool': ProcessPoolExecutor(max_workers=5)
+        "default": {"type": "threadpool", "max_workers": 20},
+        "processpool": ProcessPoolExecutor(max_workers=5),
     }
-    job_defaults = {
-        'coalesce': False,
-        'max_instances': 10
-    }
+    job_defaults = {"coalesce": False, "max_instances": 10}
 
-    scheduler.configure(executors=executors, job_defaults=job_defaults, timezone=timezone)
+    scheduler.configure(
+        executors=executors, job_defaults=job_defaults, timezone=timezone
+    )
 
     scheduler.start()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runScheduler()
