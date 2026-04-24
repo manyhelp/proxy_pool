@@ -10,6 +10,7 @@
                    2016/11/25: proxyFetcher
 -------------------------------------------------
 """
+
 __author__ = "JHao"
 
 import re
@@ -219,7 +220,8 @@ class ProxyFetcher(object):
             timeout=30,
         )
         try:
-            for each in r.json["http_high_anonymous"]:
+            for line in r.text.strip().split("\n"):
+                each = json.loads(line)
                 ip = each["host"]
                 port = each["port"]
                 yield "%s:%s" % (ip, port)
@@ -269,7 +271,7 @@ class ProxyFetcher(object):
 
 if __name__ == "__main__":
     p = ProxyFetcher()
-    for _ in p.freeProxy16():
+    for _ in p.freeProxy14():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm

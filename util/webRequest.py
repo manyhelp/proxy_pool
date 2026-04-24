@@ -67,7 +67,7 @@ class WebRequest(object):
         header=None,
         retry_time=3,
         retry_interval=5,
-        timeout=30,
+        timeout=5,
         params=None,
         *args,
         **kwargs
