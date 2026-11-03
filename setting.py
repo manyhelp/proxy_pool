@@ -76,7 +76,7 @@ FETCH_PROXY = "http://100.72.93.13:11808"
 # 代理验证目标网站
 HTTP_URL = "http://quote.eastmoney.com/concept/sh603777.html?from=classic"
 
-HTTPS_URL = "https://quote.eastmoney.com/concept/sh603777.html?from=classic"
+HTTPS_URL = "https://push2his.eastmoney.com/api/qt/stock/trends2/get?secid=1.510050&ndays=1&fields1=f1&fields2=f51"
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 5
