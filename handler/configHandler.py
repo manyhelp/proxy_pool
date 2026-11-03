@@ -45,6 +45,11 @@ class ConfigHandler(withMetaclass(Singleton)):
         reload_six(setting)
         return setting.PROXY_FETCHER
 
+    @property
+    def fetchProxy(self):
+        """抓取代理源时, 直连访问不通的网站自动改用此代理访问, 留空关闭"""
+        return os.getenv("FETCH_PROXY", setting.FETCH_PROXY)
+
     @LazyProperty
     def httpUrl(self):
         return os.getenv("HTTP_URL", setting.HTTP_URL)

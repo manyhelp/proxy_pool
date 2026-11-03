@@ -61,7 +61,18 @@ PROXY_FETCHER = [
     "freeProxy14",
     "freeProxy15",
     "freeProxy16",
+    "freeProxy17",
+    "freeProxy18",
+    "freeProxy19",
+    "freeProxy20",
+    "freeProxy21",
+    "freeProxy22",
 ]
+
+# ############# fetch proxy config #############
+# 抓取代理源时, 部分网站直连访问不通(如 proxylistplus 直连403)
+# 配置后直连失败的源会自动改用此代理重试, 置空("")则关闭
+FETCH_PROXY = "http://100.72.93.13:11808"
 
 # ############# proxy validator #################
 # 代理验证目标网站

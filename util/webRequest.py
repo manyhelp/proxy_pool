@@ -19,6 +19,7 @@ import random
 import time
 
 from handler.logHandler import LogHandler
+from handler.configHandler import ConfigHandler
 
 requests.packages.urllib3.disable_warnings()
 
@@ -28,6 +29,7 @@ class WebRequest(object):
 
     def __init__(self, *args, **kwargs):
         self.log = LogHandler(self.name, file=False)
+        self.conf = ConfigHandler()
         self.response = Response()
 
     @property
@@ -69,6 +71,7 @@ class WebRequest(object):
         retry_interval=5,
         timeout=5,
         params=None,
+        proxy=None,
         *args,
         **kwargs
     ):
@@ -79,11 +82,37 @@ class WebRequest(object):
         :param retry_time: retry time
         :param retry_interval: retry interval
         :param timeout: network timeout
+        :param proxy: 指定本次请求使用的代理(如 http://ip:port),
+                      默认直连, 直连不通时自动改用 setting.FETCH_PROXY 重试
         :return:
         """
         headers = self.header
         if header and isinstance(header, dict):
             headers.update(header)
+        fetch_proxy = proxy or self.conf.fetchProxy
+        # 先直连(只试一次,快速失败), 直连不通且配置了抓取代理时, 通过代理按retry_time重试
+        if self.__request(
+            url, headers, params, timeout, None,
+            1 if fetch_proxy else retry_time, retry_interval, *args, **kwargs
+        ):
+            return self
+        if fetch_proxy and self.__request(
+            url, headers, params, timeout,
+            {"http": fetch_proxy, "https": fetch_proxy},
+            retry_time, retry_interval, *args, **kwargs
+        ):
+            return self
+        resp = Response()
+        resp.status_code = 200
+        return self
+
+    def __request(
+        self, url, headers, params, timeout, proxies, retry_time, retry_interval, *args, **kwargs
+    ):
+        """
+        send get request with proxies
+        :return: True if status code is 200 else False
+        """
         while True:
             try:
                 self.response = requests.get(
@@ -91,19 +120,23 @@ class WebRequest(object):
                     headers=headers,
                     params=params,
                     timeout=timeout,
+                    proxies=proxies,
                     *args,
                     **kwargs
                 )
-                return self
+                if self.response.status_code == 200:
+                    return True
+                self.log.error(
+                    "requests: %s error: status_code %s"
+                    % (url, self.response.status_code)
+                )
             except Exception as e:
                 self.log.error("requests: %s error: %s" % (url, str(e)))
-                retry_time -= 1
-                if retry_time <= 0:
-                    resp = Response()
-                    resp.status_code = 200
-                    return self
-                self.log.info("retry %s second after" % retry_interval)
-                time.sleep(retry_interval)
+            retry_time -= 1
+            if retry_time <= 0:
+                return False
+            self.log.info("retry %s second after" % retry_interval)
+            time.sleep(retry_interval)
 
     @property
     def tree(self):

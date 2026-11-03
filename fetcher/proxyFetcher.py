@@ -87,17 +87,10 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy05():
-        """稻壳代理 https://www.docip.net/"""
-        r = WebRequest().get("https://www.docip.net/data/free.json", timeout=30)
-        try:
-            for each in r.json["data"]:
-                yield each["ip"]
-        except Exception as e:
-            print(e)
-
-    @staticmethod
-    def freeProxy06():
-        urls = ["https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1"]
+        urls = [
+            "https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1",
+            "https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-2",
+        ]
         request = WebRequest()
         for url in urls:
             r = request.get(url, timeout=30)
@@ -109,7 +102,7 @@ class ProxyFetcher(object):
                 yield ":".join(proxy)
 
     @staticmethod
-    def freeProxy07():
+    def freeProxy06():
         r = WebRequest().get(
             "https://raw.githubusercontent.com/CharlesPikachu/freeproxy/master/proxies.json",
             timeout=30,
@@ -127,18 +120,7 @@ class ProxyFetcher(object):
             print(e)
 
     @staticmethod
-    def freeProxy08():
-        r = WebRequest().get("http://api.66daili.com/?format=json", timeout=30)
-        try:
-            for each in r.json["data"]:
-                ip = each["ip"]
-                port = each["port"]
-                yield "%s:%s" % (ip, port)
-        except Exception as e:
-            print(e)
-
-    @staticmethod
-    def freeProxy09():
+    def freeProxy07():
         r = WebRequest().get("http://api.goodips.com/?format=json", timeout=30)
         try:
             for each in r.json["data"]:
@@ -154,7 +136,7 @@ class ProxyFetcher(object):
             print(e)
 
     @staticmethod
-    def freeProxy10():
+    def freeProxy08():
         r = WebRequest().get(
             "https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/http/data.json",
             timeout=30,
@@ -168,7 +150,7 @@ class ProxyFetcher(object):
             print(e)
 
     @staticmethod
-    def freeProxy11():
+    def freeProxy09():
         r = WebRequest().get(
             "https://cdn.jsdelivr.net/gh/proxifly/free-proxy-list@main/proxies/protocols/https/data.json",
             timeout=30,
@@ -182,7 +164,7 @@ class ProxyFetcher(object):
             print(e)
 
     @staticmethod
-    def freeProxy12():
+    def freeProxy10():
         r = WebRequest().get(
             "https://proxylist.geonode.com/api/proxy-list?limit=100&protocols=http&page=1&sort_by=lastChecked&sort_type=desc",
             timeout=30,
@@ -196,7 +178,7 @@ class ProxyFetcher(object):
             print(e)
 
     @staticmethod
-    def freeProxy13():
+    def freeProxy11():
         r = WebRequest().get(
             "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt",
             timeout=30,
@@ -214,7 +196,7 @@ class ProxyFetcher(object):
             print(e)
 
     @staticmethod
-    def freeProxy14():
+    def freeProxy12():
         r = WebRequest().get(
             "https://raw.githubusercontent.com/parserpp/ip_ports/main/proxyinfo.json",
             timeout=30,
@@ -230,7 +212,7 @@ class ProxyFetcher(object):
             print(e)
 
     @staticmethod
-    def freeProxy15():
+    def freeProxy13():
         """89IP代理"""
         headers = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -259,19 +241,85 @@ class ProxyFetcher(object):
             print(e)
 
     @staticmethod
-    def freeProxy16():
-        """稻壳代理"""
-        r = WebRequest().get("https://www.docip.net/data/free.json", timeout=30)
+    def _proxyTxtFetcher(url):
+        """抓取纯文本代理列表(每行一个 ip:port, 兼容带http(s)://前缀的行)"""
+        r = WebRequest().get(url, timeout=30)
         try:
-            for each in r.json["data"]:
-                yield each["ip"]
+            for each in re.findall(r"\b(?:\d{1,3}\.){3}\d{1,3}:\d{2,5}\b", r.text):
+                yield each
+        except Exception as e:
+            print(e)
+
+    @staticmethod
+    def freeProxy14():
+        """monosans proxy-list https://github.com/monosans/proxy-list"""
+        url = "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt"
+        for proxy in ProxyFetcher._proxyTxtFetcher(url):
+            yield proxy
+
+    @staticmethod
+    def freeProxy15():
+        """proxifly raw文本版(与freeProxy08同数据源, jsdelivr被墙时的备用入口)"""
+        url = "https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/protocols/http/data.txt"
+        for proxy in ProxyFetcher._proxyTxtFetcher(url):
+            yield proxy
+
+    @staticmethod
+    def freeProxy16():
+        """clarketm proxy-list"""
+        url = "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt"
+        for proxy in ProxyFetcher._proxyTxtFetcher(url):
+            yield proxy
+
+    @staticmethod
+    def freeProxy17():
+        """mmpx12 proxy-list"""
+        url = "https://raw.githubusercontent.com/mmpx12/proxy-list/master/http.txt"
+        for proxy in ProxyFetcher._proxyTxtFetcher(url):
+            yield proxy
+
+    @staticmethod
+    def freeProxy18():
+        """roosterkid openproxylist"""
+        url = "https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt"
+        for proxy in ProxyFetcher._proxyTxtFetcher(url):
+            yield proxy
+
+    @staticmethod
+    def freeProxy19():
+        """proxyscrape"""
+        url = "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=10000&country=all"
+        for proxy in ProxyFetcher._proxyTxtFetcher(url):
+            yield proxy
+
+    @staticmethod
+    def freeProxy20():
+        """openproxylist https://openproxylist.xyz"""
+        url = "https://openproxylist.xyz/http.txt"
+        for proxy in ProxyFetcher._proxyTxtFetcher(url):
+            yield proxy
+
+    @staticmethod
+    def freeProxy21():
+        """proxyspace https://proxyspace.pro"""
+        url = "https://proxyspace.pro/http.txt"
+        for proxy in ProxyFetcher._proxyTxtFetcher(url):
+            yield proxy
+
+    @staticmethod
+    def freeProxy22():
+        """free-proxy-list.net"""
+        r = WebRequest().get("https://free-proxy-list.net/", timeout=30)
+        try:
+            for each in re.findall(r"\b(?:\d{1,3}\.){3}\d{1,3}:\d{2,5}\b", r.text):
+                yield each
         except Exception as e:
             print(e)
 
 
 if __name__ == "__main__":
     p = ProxyFetcher()
-    for _ in p.freeProxy14():
+    for _ in p.freeProxy12():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm
