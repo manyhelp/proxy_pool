@@ -65,8 +65,6 @@ PROXY_FETCHER = [
     "freeProxy18",
     "freeProxy19",
     "freeProxy20",
-    "freeProxy21",
-    "freeProxy22",
 ]
 
 # ############# fetch proxy config #############
