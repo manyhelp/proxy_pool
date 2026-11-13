@@ -1,0 +1,42 @@
+# ProxyPool Rust 版配置
+# 优先级: 环境变量 > 本文件 > 内置默认值
+# 查找顺序: SETTING 环境变量指定的路径 > 当前目录 setting.toml > exe 同目录 setting.toml
+# 所有字段均可省略, 省略时使用与 Python 版 setting.py 相同的默认值
+
+# API 监听地址与端口
+host = "0.0.0.0"
+port = 5010
+
+# Redis 连接串(空密码可写作 redis://:@host:port/db, 会被自动剥离空凭据)
+db_conn = "redis://:@127.0.0.1:6379/0"
+table_name = "use_proxy"
+
+# 启用的抓取源名单; 注释掉整项则启用全部 20 个源
+proxy_fetcher = [
+    "freeProxy01", "freeProxy02", "freeProxy03", "freeProxy04", "freeProxy05",
+    "freeProxy06", "freeProxy07", "freeProxy08", "freeProxy09", "freeProxy10",
+    "freeProxy11", "freeProxy12", "freeProxy13", "freeProxy14", "freeProxy15",
+    "freeProxy16", "freeProxy17", "freeProxy18", "freeProxy19", "freeProxy20",
+]
+
+# 抓取源直连失败时的回退代理; 置空 "" 关闭
+fetch_proxy = "http://100.72.93.13:11808"
+
+# 代理可用性校验目标(东方财富)
+http_url = "http://quote.eastmoney.com/concept/sh603777.html?from=classic"
+https_url = "https://push2his.eastmoney.com/api/qt/stock/trends2/get?secid=1.510050&ndays=1&fields1=f1&fields2=f51"
+
+# 校验超时(秒)
+verify_timeout = 5
+
+# 允许的校验失败次数; 0 = 一次失败即淘汰
+max_fail_count = 0
+
+# check 时池子低于该值先补一轮采集
+pool_size_min = 200
+
+# 是否查询并记录代理地域(ip-api.com)
+proxy_region = false
+
+# 单轮校验并发数(Python 版固定 20)
+check_concurrency = 100
