@@ -120,6 +120,15 @@ impl ProxyHandler {
             .collect())
     }
 
+    /// 全量代理 key 列表(不解析 value, 供采集预过滤)。
+    ///
+    /// # Errors
+    ///
+    /// Redis 查询失败。
+    pub async fn get_all_keys(&self) -> PoolResult<Vec<String>> {
+        self.db.get_all_keys().await
+    }
+
     /// 池子统计。
     ///
     /// # Errors

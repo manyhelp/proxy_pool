@@ -126,6 +126,21 @@ class RedisClient(object):
         else:
             return items
 
+    def getAllKeys(self):
+        """
+        返回全部代理 key(ip:port), 不读value(供采集预过滤)
+        :return: key列表
+        """
+        return self.__conn.hkeys(self.name)
+
+    def putIfAbsent(self, proxy_obj):
+        """
+        仅当代理不存在时写入(hsetnx原子操作)
+        :param proxy_obj: Proxy obj
+        :return: True写入成功 / False已存在
+        """
+        return bool(self.__conn.hsetnx(self.name, proxy_obj.proxy, proxy_obj.to_json))
+
     def clear(self):
         """
         清空所有代理, 使用changeTable指定hash name

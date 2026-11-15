@@ -95,13 +95,15 @@ class DoValidator(object):
 class _ThreadChecker(Thread):
     """多线程检测"""
 
-    def __init__(self, work_type, target_queue, thread_name):
+    def __init__(self, work_type, target_queue, thread_name, put_keys=None):
         Thread.__init__(self, name=thread_name)
         self.work_type = work_type
         self.log = LogHandler("checker")
         self.proxy_handler = ProxyHandler()
         self.target_queue = target_queue
         self.conf = ConfigHandler()
+        # raw模式: 收集本轮新入库的代理key, 供调度层跳过刚入库代理的use复检
+        self.put_keys = put_keys
 
     def run(self):
         # self.log.info("{}ProxyCheck - {}: start".format(self.work_type.title(), self.name))
@@ -124,12 +126,11 @@ class _ThreadChecker(Thread):
 
     def __ifRaw(self, proxy):
         if proxy.last_status:
-            if self.proxy_handler.exists(proxy):
-                pass
-                # self.log.info('RawProxyCheck - {}: {} exist'.format(self.name, proxy.proxy.ljust(23)))
-            else:
+            # putIfAbsent(hsetnx): 原子"不存在才写入", 替代exists+put两次往返
+            if self.proxy_handler.putIfAbsent(proxy):
+                if self.put_keys is not None:
+                    self.put_keys.append(proxy.proxy)
                 # self.log.info('RawProxyCheck - {}: {} pass'.format(self.name, proxy.proxy.ljust(23)))
-                self.proxy_handler.put(proxy)
         # else:
         #     self.log.info('RawProxyCheck - {}: {} fail'.format(self.name, proxy.proxy.ljust(23)))
 
@@ -155,11 +156,15 @@ def Checker(tp, queue):
     run Proxy ThreadChecker
     :param tp: raw/use
     :param queue: Proxy Queue
-    :return:
+    :return: raw模式返回本轮新入库的代理key列表, use模式返回空列表
     """
+    put_keys = list()
     thread_list = list()
     for index in range(20):
-        thread_list.append(_ThreadChecker(tp, queue, "thread_%s" % str(index).zfill(2)))
+        thread_list.append(
+            _ThreadChecker(tp, queue, "thread_%s" % str(index).zfill(2),
+                           put_keys if tp == "raw" else None)
+        )
 
     for thread in thread_list:
         thread.setDaemon(True)
@@ -167,3 +172,5 @@ def Checker(tp, queue):
 
     for thread in thread_list:
         thread.join()
+
+    return put_keys

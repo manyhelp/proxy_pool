@@ -199,6 +199,16 @@ impl RedisClient {
         }
     }
 
+    /// 池内全部代理 key(`ip:port`), 不读 value(供采集预过滤, 比 get_all 轻)。
+    ///
+    /// # Errors
+    ///
+    /// Redis 查询失败。
+    pub async fn get_all_keys(&self) -> PoolResult<Vec<String>> {
+        let mut conn = self.conn.clone();
+        Ok(conn.hkeys(&self.table).await?)
+    }
+
     /// 池子统计(总量与 https 数, 对齐 Python getCount)。
     ///
     /// # Errors

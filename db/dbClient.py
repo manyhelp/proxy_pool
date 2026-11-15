@@ -112,6 +112,12 @@ class DbClient(withMetaclass(Singleton)):
     def getAll(self, https):
         return self.client.getAll(https)
 
+    def getAllKeys(self):
+        return self.client.getAllKeys()
+
+    def putIfAbsent(self, proxy):
+        return self.client.putIfAbsent(proxy)
+
     def clear(self):
         return self.client.clear()
 

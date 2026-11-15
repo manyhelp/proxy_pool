@@ -78,6 +78,21 @@ class ProxyHandler(object):
         proxies = self.db.getAll(https)
         return [Proxy.createFromJson(_) for _ in proxies]
 
+    def getAllKeys(self):
+        """
+        get all proxy keys(ip:port) from pool, 不解析value(供采集预过滤)
+        :return: list of proxy key str
+        """
+        return self.db.getAllKeys()
+
+    def putIfAbsent(self, proxy):
+        """
+        put proxy into use proxy only if it does not exist
+        :param proxy: Proxy obj
+        :return: True写入成功 / False已存在
+        """
+        return self.db.putIfAbsent(proxy)
+
     def exists(self, proxy):
         """
         check proxy exists

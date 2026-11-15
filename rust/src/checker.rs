@@ -1,8 +1,9 @@
 //! 校验执行器: 有界并发消费一批代理, 逐个校验并写回/淘汰。
 //! 入库/淘汰判定对齐 Python 版 helper/check.py 的 `_ThreadChecker`。
 
+use std::collections::HashSet;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use futures::stream::{self, StreamExt};
 use tracing::{info, warn};
@@ -13,7 +14,7 @@ use crate::proxy::Proxy;
 use crate::validator::{Mode, Validator};
 
 /// 一轮校验的结果计数。
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct CheckStats {
     /// 参与校验的代理数
     pub total: usize,
@@ -21,6 +22,9 @@ pub struct CheckStats {
     pub kept: usize,
     /// 淘汰数
     pub deleted: usize,
+    /// Raw 模式下本轮真正新入库的代理 key(调度层用它跳过刚入库代理的 use 复检);
+    /// Use 模式恒为空
+    pub ingested: HashSet<String>,
 }
 
 /// 执行一轮校验。
@@ -54,6 +58,8 @@ pub async fn run(
     let concurrency = handler.conf().check_concurrency.max(1);
     let kept = Arc::new(AtomicUsize::new(0));
     let deleted = Arc::new(AtomicUsize::new(0));
+    // 跨并发任务收集新入库 key; 锁内无 await, std Mutex 足够
+    let ingested = Arc::new(Mutex::new(HashSet::new()));
 
     stream::iter(proxies)
         .map(|mut proxy| {
@@ -61,6 +67,7 @@ pub async fn run(
             let validator = validator.clone();
             let kept = kept.clone();
             let deleted = deleted.clone();
+            let ingested = ingested.clone();
             async move {
                 validator.validate(&mut proxy, mode).await;
                 match mode {
@@ -71,6 +78,10 @@ pub async fn run(
                             match handler.put_if_absent(&proxy).await {
                                 Ok(true) => {
                                     kept.fetch_add(1, Ordering::Relaxed);
+                                    ingested
+                                        .lock()
+                                        .unwrap_or_else(|p| p.into_inner())
+                                        .insert(proxy.proxy.clone());
                                 }
                                 Ok(false) => {}
                                 Err(e) => warn!(proxy = proxy.proxy, error = %e, "raw 入库失败"),
@@ -105,6 +116,7 @@ pub async fn run(
         total,
         kept: kept.load(Ordering::Relaxed),
         deleted: deleted.load(Ordering::Relaxed),
+        ingested: ingested.lock().unwrap_or_else(|p| p.into_inner()).clone(),
     };
     info!(
         ?mode,
